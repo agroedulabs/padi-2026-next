@@ -5,79 +5,50 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 // GANTI DENGAN URL APPS SCRIPT ANDA
 const URL_SHEET = "MASUKKAN_URL_WEB_APP_ANDA_DI_SINI";
 
-export default function PadiDashboard() {
+export default function Page() {
   const [data, setData] = useState<any[]>([]);
   const [site, setSite] = useState("PADI-PANTI-KND");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(URL_SHEET);
-        const json = await res.json();
-        setData(json);
-        setLoading(false);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    getData();
-    const interval = setInterval(getData, 60000);
-    return () => clearInterval(interval);
+    fetch(URL_SHEET).then(res => res.json()).then(d => setData(d)).catch(e => console.log(e));
   }, []);
 
   const filtered = data.filter((d: any) => d.id_alat === site);
-  const latest = filtered.length > 0 ? filtered[filtered.length - 1] : { temp: 0, hum: 0, label: "Menunggu Agen..." };
-
-  if (loading) return <div className="min-h-screen bg-black flex items-center justify-center text-emerald-500">MENSINKRONKAN SEMAR...</div>;
+  const current = filtered.length > 0 ? filtered[filtered.length - 1] : { temp: 0, hum: 0, label: "Loading..." };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-4 md:p-10">
-      <div className="max-w-5xl mx-auto">
-        <header className="flex flex-col md:row justify-between mb-10 gap-4">
-          <div>
-            <h1 className="text-5xl font-black italic tracking-tighter">PADI 2026</h1>
-            <p className="text-emerald-500 text-[10px] font-bold tracking-[0.3em]">KENDAL - SOROPADAN</p>
-          </div>
-          <div className="flex gap-2 bg-white/5 p-1 rounded-lg">
-            <button onClick={() => setSite("PADI-PANTI-KND")} className={`px-4 py-2 rounded-md text-[10px] font-bold ${site === 'PADI-PANTI-KND' ? 'bg-emerald-600' : ''}`}>PANTI</button>
-            <button onClick={() => setSite("PADI-SRP-01")} className={`px-4 py-2 rounded-md text-[10px] font-bold ${site === 'PADI-SRP-01' ? 'bg-emerald-600' : ''}`}>SOROPADAN</button>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div className="p-8 bg-white/5 border border-white/10 rounded-3xl">
-            <p className="text-[10px] opacity-40 uppercase mb-2 text-emerald-400 font-bold tracking-widest text-center italic">"{latest.label}"</p>
-            <div className="flex justify-around items-center pt-4">
-              <div className="text-center">
-                <p className="text-[10px] opacity-40 uppercase">Suhu</p>
-                <p className="text-4xl font-mono">{latest.temp}°</p>
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] opacity-40 uppercase">Lembab</p>
-                <p className="text-4xl font-mono">{latest.hum}%</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-8 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex flex-col justify-center text-center">
-             <p className="text-[10px] opacity-40 uppercase mb-2">Analisis Langit (BMKG)</p>
-             <p className="text-4xl font-mono">32°C</p>
-             <p className="text-[10px] mt-2 opacity-30 italic">Prediksi Wilayah Jawa Tengah</p>
+    <div className="min-h-screen bg-black text-white p-4 md:p-10">
+      <div className="max-w-4xl mx-auto border border-white/10 p-6 rounded-3xl bg-white/5 backdrop-blur-md">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-black italic">PADI 2026</h1>
+          <div className="flex gap-2">
+            <button onClick={() => setSite("PADI-PANTI-KND")} className={`px-4 py-1 rounded-full text-[10px] ${site === 'PADI-PANTI-KND' ? 'bg-emerald-600' : 'bg-white/10'}`}>PANTI</button>
+            <button onClick={() => setSite("PADI-SRP-01")} className={`px-4 py-1 rounded-full text-[10px] ${site === 'PADI-SRP-01' ? 'bg-emerald-600' : 'bg-white/10'}`}>SOROPADAN</button>
           </div>
         </div>
 
-        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 h-[350px]">
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="p-4 border border-white/10 rounded-2xl text-center">
+            <p className="text-[10px] opacity-40 uppercase">Suhu Lahan</p>
+            <p className="text-3xl font-mono">{current.temp}°C</p>
+          </div>
+          <div className="p-4 border border-white/10 rounded-2xl text-center">
+            <p className="text-[10px] opacity-40 uppercase">Kelembaban</p>
+            <p className="text-3xl font-mono">{current.hum}%</p>
+          </div>
+        </div>
+
+        <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={filtered}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-              <XAxis dataKey="time" stroke="#ffffff20" fontSize={10} />
-              <YAxis stroke="#ffffff20" fontSize={10} />
-              <Tooltip contentStyle={{backgroundColor: '#0f172a', border: 'none'}} />
-              <Area type="monotone" dataKey="temp" stroke="#ef4444" fill="#ef4444" fillOpacity={0.1} strokeWidth={3} />
-              <Area type="monotone" dataKey="hum" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.1} strokeWidth={3} />
+              <XAxis dataKey="time" hide />
+              <Tooltip contentStyle={{backgroundColor: '#000', border: 'none'}} />
+              <Area type="monotone" dataKey="temp" stroke="#ef4444" fill="#ef4444" fillOpacity={0.1} />
+              <Area type="monotone" dataKey="hum" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.1} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
+        <p className="text-center text-[10px] mt-6 opacity-30 italic">"{current.label}"</p>
       </div>
     </div>
   );
