@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // GANTI DENGAN URL APPS SCRIPT ANDA
-const URL_SHEET = "MASUKKAN_URL_WEB_APP_ANDA_DI_SINI";
+const URL_SHEET = "https://script.google.com/macros/s/AKfycbyuimpq4fT0L8aArXfQ5Hfuot3xd1iyekCLmSBXcXSLIfQXXX3RHV8kqgFQCFIFck0L/exec";
 
 export default function Page() {
   const [data, setData] = useState<any[]>([]);
