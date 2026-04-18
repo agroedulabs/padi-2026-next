@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { MapPin, Thermometer, Droplets, CloudSun, Activity } from 'lucide-react';
 
 // === GANTI DENGAN URL WEB APP GOOGLE SHEETS ANDA ===
-const URL_SHEET = 'MASUKKAN_URL_APPS_SCRIPT_DI_SINI';
+const URL_SHEET = 'https://script.google.com/macros/s/AKfycbyuimpq4fT0L8aArXfQ5Hfuot3xd1iyekCLmSBXcXSLIfQXXX3RHV8kqgFQCFIFck0L/exec';
 
 export default function PadiCommandCenter() {
   const [allData, setAllData] = useState([]);
